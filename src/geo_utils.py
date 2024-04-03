@@ -41,3 +41,13 @@ def save_raster(data, output_path, profile):
     profile_new['count'] = number_of_bands
     with rasterio.open(output_path, 'w', **profile_new) as dst:
         dst.write(data)
+
+
+def reverse_axis(raster):
+    ch = min(raster.shape)
+    channel_first = list(raster.shape).index(ch) == 0
+    if channel_first:
+        raster = np.transpose(raster, (1, 2, 0))
+    else:
+        raster = np.transpose(raster, (2, 0, 1))
+    return raster
