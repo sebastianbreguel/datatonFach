@@ -45,6 +45,18 @@ def create_features_dataset(featurizer, img_composed, risk_cls_resized, patch_si
     return X, y
 
 
+def risk_cls_from_boxes(bbox_path, label_names):
+    df_bbox = pd.read_csv(bbox_path)
+    h, w = df_bbox.iloc[0]['image_height'], df_bbox.iloc[0]['image_width']
+    risk_cls_resized = np.zeros((h, w, 1), dtype=int)
+    for _, row in df_bbox.iterrows():
+        label = label_names.index(row['label_name'])+1
+        ymin, ymax = row['bbox_y'], row['bbox_y'] + row['bbox_height']
+        xmin, xmax = row['bbox_x'], row['bbox_x'] + row['bbox_width']
+        risk_cls_resized[ymin:ymax, xmin:xmax] = label
+    return risk_cls_resized
+
+
 if __name__ == "__main__":
     featurizer = DeepFeaturizer(backbone_size='base')
     train_folders = ['valpo', 'USA', 'USA2']
@@ -53,18 +65,14 @@ if __name__ == "__main__":
     Xs, ys = [], []
     for folder in train_folders:
         input_dir = os.path.join('..', 'data', folder)
-        img_composed_path = os.path.join(input_dir, 'composed.tif') 
+        img_composed_path = os.path.join(input_dir, 'composed.tif')
 
         img_composed, profile = geo.load_raster(img_composed_path)
         img_composed = geo.reverse_axis(img_composed)
 
         bbox_path = os.path.join(input_dir, 'bbox_labels.csv')
         if os.path.exists(bbox_path):
-            df_bbox = pd.read_csv(bbox_path)
-            risk_cls_resized = np.zeros(img_composed.shape[0:2] + (1,), dtype=int)
-            for _, row in df_bbox.iterrows():
-                label = label_names.index(row['label_name'])+1
-                risk_cls_resized[row['bbox_y']:row['bbox_y'] + row['bbox_height'], row['bbox_x']:row['bbox_x'] + row['bbox_width']] = label
+            risk_cls_resized = risk_cls_from_boxes(bbox_path, label_names)
         else:
             risk_cls = os.path.join(input_dir, 'whp2023_cls_conus_crop.tif')
             risk_cls, label_profile = geo.load_raster(risk_cls)
