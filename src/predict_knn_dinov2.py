@@ -18,6 +18,17 @@ from featurizer_dinov2 import DeepFeaturizer
 from raster_sliding_window_predict import sliding_window, image_from_patches
 
 
+def reduce_output_clases(y_pred_img):
+    label_names = ['high', 'low', 'moderate', 'non-burnable', 'very_high', 'very_low', 'water']
+    label_ids = list(np.arange(0, len(label_names)) + 1)
+    new_labels = ['high', 'low', 'moderate', 'moderate', 'high', 'very_low', 'very_low']
+    new_ids = [label_names.index(lb)+1 for lb in new_labels]
+
+    for old_id, new_idx in zip(label_ids, new_ids):
+        if new_idx != old_id:
+            y_pred_img[y_pred_img == old_id] = new_idx
+    return y_pred_img
+
 input_raster_path = os.path.join('..', 'data', 'valpo', 'composed.tif')
 #input_raster_path = os.path.join('..', 'data', 'USA', 'composed.tif')
 #input_raster_path = os.path.join('..', 'data', 'USA2', 'composed.tif')
@@ -57,7 +68,7 @@ img_composed = img_composed_aux
 im_patches = sliding_window(img_composed, patch_size, stride)
 for patch_i in tqdm(range(0, im_patches.shape[0])):
     im_patch = im_patches[patch_i, :, :, :]
-    #im_patch = resize(im_patch, (im_patch.shape[0], im_patch.shape[1]), order=2)
+    im_patch = resize(im_patch, (im_patch.shape[0]*2, im_patch.shape[1]*2), order=2)
 
     features = featurizer.get_features(im_patch)
     fmap_size = features.shape[0:2]
@@ -78,18 +89,9 @@ io.show()
 io.imshow(label2rgb(np.squeeze(y_pred_img).astype(np.uint8)))
 io.show()
 
-""" """
 
-label_names = ['high', 'low', 'moderate', 'non-burnable', 'very_high', 'very_low', 'water']
-label_ids = list(np.arange(0, len(label_names)) + 1)
-new_labels = ['high', 'low', 'moderate', 'moderate', 'high', 'very_low', 'very_low']
-new_ids = [label_names.index(lb)+1 for lb in new_labels]
-
-for old_id, new_idx in zip(label_ids, new_ids):
-    if new_idx != old_id:
-        y_pred_img[y_pred_img == old_id] = new_idx
-
-io.imshow(label2rgb(np.squeeze(y_pred_img).astype(np.uint8)))
+y_pred_img_less_classes = reduce_output_clases(y_pred_img)
+io.imshow(label2rgb(np.squeeze(y_pred_img_less_classes).astype(np.uint8)))
 io.show()
 
 ts = datetime.now().timestamp()
