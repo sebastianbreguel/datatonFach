@@ -18,7 +18,7 @@ def calcular_hectareas_quemadas(src_img):
     return hectareas_quemadas
 
 
-tif = "rasters/lansat/2024_valpo_swir16-nir-red.tif"
+tif = "C:/Users/lucas/OneDrive/Documentos/GitHub/datatonFach/interface/rasters/lansat/dnbr.tif"
 src_img = rasterio.open(tif)
 
 st.set_page_config(page_title="Cuantificación de incendios", layout="wide")
