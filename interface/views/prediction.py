@@ -6,8 +6,8 @@ def show_prediction():
     """
     Display the prediction of fire risk in a Streamlit page.
     """
-    tif_1 = "../rasters/lansat/2024_valpo_swir16-nir-red.tif"
-    predicted_tif = "../rasters/predictions/valpo_prediction.tif"
+    tif_1 = "rasters/lansat/2024_valpo_swir16-nir-red.tif"
+    predicted_tif = "rasters/predictions/valpo_prediction.tif"
 
     st.title('Predictor de incendios')
 

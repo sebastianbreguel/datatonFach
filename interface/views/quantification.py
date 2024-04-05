@@ -24,7 +24,7 @@ def show_quantification():
     """
     Display the quantification of fires in a Streamlit page.
     """
-    tif = "../rasters/lansat/2024_valpo_swir16-nir-red.tif"
+    tif = "rasters/lansat/2024_valpo_swir16-nir-red.tif"
     src_img = rasterio.open(tif)
 
     st.title('Cuantificador de incendios')
@@ -41,12 +41,12 @@ def show_quantification():
         hectareas_quemadas = calcular_hectareas_quemadas(src_img)
         row1_col2_col1, row1_col2_col2 = st.columns([1, 3])
         with row1_col2_col1:
-            st.image("../img/terreno.png")
+            st.image("img/terreno.png")
         with row1_col2_col2:
             st.metric(label="Hectáreas quemadas", value=f"{hectareas_quemadas:.2f}", delta=None)
 
         # Show the different categories of burned hectares
-        st.write("### Categorias de hectáreas quemadas")
-        st.write(f"#### 🟨 Baja intensidad: {hectareas_quemadas * 0.4}")
-        st.write(f"#### 🟧 Media intensidad {hectareas_quemadas * 0.1}")
-        st.write(f"#### 🟥 Alta intensidad: {hectareas_quemadas * 0.5}")
+        st.write("##### Categorias de hectáreas quemadas")
+        st.write(f"🟨 Baja intensidad: {hectareas_quemadas * 0.4}")
+        st.write(f"🟧 Media intensidad {hectareas_quemadas * 0.1}")
+        st.write(f"🟥 Alta intensidad: {hectareas_quemadas * 0.5}")
