@@ -52,29 +52,30 @@ def sliding_window(image, patch_size, stride):
             patches.append(patch)
     return np.array(patches)
 
-featurizer = DeepFeaturizer()
+if __name__ == "__main__":
+    featurizer = DeepFeaturizer()
 
-raster_path = os.path.join('..', 'data', 'composed.tif')
-raster, profile = geo.load_raster(raster_path)
+    raster_path = os.path.join('..', 'data', 'composed.tif')
+    raster, profile = geo.load_raster(raster_path)
 
-raster = geo.reverse_axis(raster)
+    raster = geo.reverse_axis(raster)
 
-patch_size = (224, 224)
-stride = 25
+    patch_size = (224, 224)
+    stride = 25
 
-patches = sliding_window(raster, patch_size, stride)
-predictions = []
-for patch_i in tqdm(range(0, patches.shape[0])):
-    patch = patches[patch_i, :, :, :]
-    pred = featurizer.predict(patch)
-    predictions.append(pred)
-predictions = np.array(predictions)
+    patches = sliding_window(raster, patch_size, stride)
+    predictions = []
+    for patch_i in tqdm(range(0, patches.shape[0])):
+        patch = patches[patch_i, :, :, :]
+        pred = featurizer.predict(patch)
+        predictions.append(pred)
+    predictions = np.array(predictions)
 
-im_pred = image_from_patches(patches=predictions,
-                             original_shape=raster.shape,
-                             patch_size=patch_size,
-                             stride=stride)
+    im_pred = image_from_patches(patches=predictions,
+                                 original_shape=raster.shape,
+                                 patch_size=patch_size,
+                                 stride=stride)
 
-profile_new = profile.copy()
-profile_new['nodata'] = 0
-geo.save_raster(geo.reverse_axis(im_pred), 'pred.tif', profile_new)
+    profile_new = profile.copy()
+    profile_new['nodata'] = 0
+    geo.save_raster(geo.reverse_axis(im_pred), 'pred.tif', profile_new)
