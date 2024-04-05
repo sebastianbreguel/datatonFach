@@ -12,8 +12,8 @@ from sklearn.decomposition import PCA
 
 
 class DeepFeaturizer():
-    def __init__(self):
-        self.model = load_model()
+    def __init__(self, backbone_size='small'):
+        self.model = load_model(backbone_size)
 
     def get_features(self, img):
         features, _, grid_shape = get_dense_descriptor(self.model, img)
