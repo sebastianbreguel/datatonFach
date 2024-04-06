@@ -1,0 +1,21 @@
+numpy
+scikit-image
+rasterio
+matplotlib
+faiss
+streamlit
+folium
+localtileserver
+pandas
+tqdm
+--extra-index-url https://download.pytorch.org/whl/cu117
+torch==2.0.0
+torchvision==0.15.0
+omegaconf
+torchmetrics==0.10.3
+fvcore
+iopath
+xformers==0.0.18
+submitit
+--extra-index-url https://pypi.nvidia.com
+cuml-cu11

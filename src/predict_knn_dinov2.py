@@ -99,7 +99,7 @@ if __name__ == "__main__":
 
     ts = datetime.now().timestamp()
     ts = str(ts).replace('.', '_')
-    output_fn = f'prediction_{ts}.tif'
+    output_fn = os.path.join('..', 'data', 'predictions',f'prediction_{ts}.tif')
 
     profile_new = profile.copy()
     profile_new['count'] = 1
