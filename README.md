@@ -8,3 +8,9 @@ Integrantes:
 - Benjamin Henriquez Soto
 - Sebastian Breguel Gonzalez
 - Martin Bravo Diaz
+
+## How to run 
+1. Clone the repository
+2. Run `poetry install`
+3. cd `interface`
+4. Run `streamlit run app.py`
