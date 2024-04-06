@@ -85,12 +85,14 @@ def show_quantification():
         )
 
         st.write("##### Área quemada (en hectáreas):")
-        
+
         row1_col2_col1, row1_col2_col2 = st.columns([1, 3])
         with row1_col2_col1:
             st.image("img/terreno.png")
         with row1_col2_col2:
-            st.metric(label="Total", value="{:,.1f}".format(hectareas_quemadas), delta="")
+            st.metric(
+                label="Total", value="{:,.1f}".format(hectareas_quemadas), delta=""
+            )
 
         st.write(f"**Baja severidad**: {dnbr_counts_pixels['low_severity']}")
         st.write(
