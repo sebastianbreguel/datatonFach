@@ -15,11 +15,18 @@ class FaissKNeighbors:
         self.y = None
         self.k = k
 
-    def fit(self, X, y):
-        self.index = faiss.IndexFlatL2(X.shape[1])
+    def fit(self, X, y, use_IVFF=True):
+        if use_IVFF:
+            dim = X.shape[1]
+            nlist = 60
+            quantizer = faiss.IndexFlatL2(dim)
+            self.index = faiss.IndexIVFFlat(quantizer, dim, nlist)
+            self.index.train(X.astype(np.float32))
+        else:
+            self.index = faiss.IndexFlatL2(X.shape[1])
         self.index.add(X.astype(np.float32))
         self.y = np.squeeze(y)
-    
+
     def update(self, X_new, y_new):
         X_new = X_new.astype(np.float32)
         self.index.add(X_new)
