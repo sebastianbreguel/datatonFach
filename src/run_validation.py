@@ -15,7 +15,7 @@ from create_train_dataset import risk_cls_from_boxes
 
 if __name__ == "__main__":
     bbox_path = os.path.join('..', 'data', 'valpo', 'bbox_labels.csv')
-    pred_raster_path = 'prediction_1712318539_986473.tif'
+    pred_raster_path = os.path.join('..', 'data', 'predictions', 'prediction_1712318539_986473.tif')
 
     label_names, label_ids = create_labelmap()
     y_pred_img, profile = geo.load_raster(pred_raster_path)
