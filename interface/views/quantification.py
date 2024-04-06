@@ -24,7 +24,7 @@ def show_quantification():
     """
     Display the quantification of fires in a Streamlit page.
     """
-    tif = "rasters/lansat/dnbr.tif"
+    tif = "rasters/lansat/dnbr_discretised.tif"
     src_img = rasterio.open(tif)
 
     st.title('Cuantificador de incendios')
