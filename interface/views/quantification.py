@@ -24,7 +24,7 @@ def show_quantification():
     """
     Display the quantification of fires in a Streamlit page.
     """
-    tif = "rasters/lansat/dnbr_discretised.tif"
+    tif = "rasters/lansat/dnbr_2023_2024_discretised.tif"
     src_img = rasterio.open(tif)
 
     st.title('Cuantificador de incendios')
@@ -33,7 +33,8 @@ def show_quantification():
 
     with row1_col1:
         map = leafmap.Map(latlon_control=False)
-        map.add_raster(tif, colormap="viridis", layer_name="Landsat")
+        # Mapas de color disponibles en: https://matplotlib.org/stable/gallery/color/colormap_reference.html
+        map.add_raster(tif, layer_name="Landsat", colormap="RdYlBu", opacity=0.7)
         map.to_streamlit()
 
     with row1_col2:
