@@ -3,43 +3,43 @@ import leafmap.foliumap as leafmap
 import rasterio
 import numpy as np
 
-def calcular_hectareas_quemadas(pre_fire_src, post_fire_src):
+def calcular_hectareas_quemadas(pre_fire_src: rasterio.io.DatasetReader, post_fire_src: rasterio.io.DatasetReader) -> dict:
     """
-    Calculate the number of burned hectares from a given raster image.
+    Calculate the burned area in hectares from pre and post-fire satellite images, categorized by severity.
 
     Parameters:
-    src_img (rasterio.io.DatasetReader): The raster image dataset reader.
+    pre_fire_src (rasterio.io.DatasetReader): Pre-fire raster image dataset reader.
+    post_fire_src (rasterio.io.DatasetReader): Post-fire raster image dataset reader.
 
     Returns:
-    float: The number of burned hectares.
+    Dict[str, float]: Dictionary with the area of burned hectares categorized by severity.
     """
-    nbr_pre_fire = (pre_fire_src.read(3) - pre_fire_src.read(2)) / (pre_fire_src.read(3) + pre_fire_src.read(2))
-    nbr_post_fire = (post_fire_src.read(3) - post_fire_src.read(2)) / (post_fire_src.read(3) + post_fire_src.read(2))
+    nbr_pre_fire = (pre_fire_src.read(2) - pre_fire_src.read(1)) / (pre_fire_src.read(2) + pre_fire_src.read(1))
+    nbr_post_fire = (post_fire_src.read(2) - post_fire_src.read(1)) / (post_fire_src.read(2) + post_fire_src.read(1))
     dnbr = nbr_pre_fire - nbr_post_fire
 
+    # Print min and max values without considering nodata values
+    dnbr = np.ma.masked_equal(dnbr, 0)
+    
     dnbr_ranges = {
-        'enhaced_regrowth_high': (-0.500, -0.251),
-        'enhaced_regrowth_low': (-0.250, -0.101),
-        'unburned': (-0.100, 0.99),
-        'low_severity': (0.100, 0.269),
-        'moderate_low_severity': (0.270, 0.439),
-        'moderate_high_severity': (0.440, 0.659),
-        'high_severity': (0.660, 1.300)
+        'enhanced_regrowth_high': (-0.500, -0.251),
+        'enhanced_regrowth_low': (-0.250, -0.101),
+        'unburned': (-0.100, 0.099),  # Corrected range
+        'low_severity': (0.100, 0.2),
+        'moderate_low_severity': (0.2, 0.3),
+        'moderate_high_severity': (0.3, 0.4),
+        'high_severity': (0.4, 1.1),
     }
-    dnbr_counts = {
-        'enhaced_regrowth_high': 0,
-        'enhaced_regrowth_low': 0,
-        'unburned': 0,
-        'low_severity': 0,
-        'moderate_low_severity': 0,
-        'moderate_high_severity': 0,
-        'high_severity': 0
-    }
-    for key, value in dnbr_ranges.items():
-        dnbr_counts[key] = ((dnbr >= value[0]) & (dnbr <= value[1])).sum()
-    dnbr_counts = {key: ((int(value) * 30 * 30) / 10000) for key, value in dnbr_counts.items()}
 
-    return dnbr_counts
+    dnbr_counts = {key: 0 for key in dnbr_ranges}
+    for key, (lower_bound, upper_bound) in dnbr_ranges.items():
+        dnbr_counts[key] = np.sum((dnbr >= lower_bound) & (dnbr <= upper_bound))
+
+    # Convert pixel count to hectares assuming each pixel is 30x30 meters.
+    pixel_area_hectares = 30 * 30 / 10000
+    dnbr_areas = {key: count * pixel_area_hectares for key, count in dnbr_counts.items()}
+
+    return dnbr_areas
 
 
 def show_quantification():
@@ -70,15 +70,9 @@ def show_quantification():
                               dnbr_counts_pixels["moderate_high_severity"] +
                               dnbr_counts_pixels["moderate_low_severity"] +
                               dnbr_counts_pixels["low_severity"])
-
-        row1_col2_col1, row1_col2_col2 = st.columns([1, 3])
-        with row1_col2_col1:
-            st.image("img/terreno.png")
-        with row1_col2_col2:
-            st.metric(label="Hectáreas quemadas", value=f"{hectareas_quemadas}", delta=None)
-
-        # Show the different categories of burned hectares
-        st.write("##### Intencidad de incendio (en hectáreas):")
-        st.write(f"🟨 Baja intensidad: {dnbr_counts_pixels['low_severity']}")
-        st.write(f"🟧 Media intensidad {(dnbr_counts_pixels['moderate_high_severity'] + dnbr_counts_pixels['moderate_low_severity'])}")
-        st.write(f"🟥 Alta intensidad: {dnbr_counts_pixels['high_severity']}")
+                              
+        st.write("##### Porcentaje de areas quemadas (en hectáreas):")
+        st.write(f"Total: {hectareas_quemadas:.2f}")
+        st.write(f"Baja severidad: {dnbr_counts_pixels['low_severity']}")
+        st.write(f"Mediana severidad: {(dnbr_counts_pixels['moderate_high_severity'] + dnbr_counts_pixels['moderate_low_severity'])}")
+        st.write(f"Alta severidad: {dnbr_counts_pixels['high_severity']}")
