@@ -43,7 +43,7 @@ Para usar [DinoV2](https://github.com/facebookresearch/dinov2) con GPU hay que i
 pip install -r requirements.txt
 ```
 ## descarga de datos y modelos
-Descargar los datos usados y modelos generados desde (google drive)[https://drive.google.com/file/d/1XkLBKegO08jcm0mbODx3u-xBhpsu4dod/view?usp=sharing]
+Descargar los datos usados y modelos generados desde [google drive](https://drive.google.com/file/d/1XkLBKegO08jcm0mbODx3u-xBhpsu4dod/view?usp=sharing)
 ## Preparar datos de entrenamiento
 Ejecutar los scripts desde src ya que los path de los archivos de entrada y salida estan relativos a esta carpeta.
 ```bash
