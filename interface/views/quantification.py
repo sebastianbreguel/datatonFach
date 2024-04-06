@@ -13,12 +13,13 @@ def calcular_hectareas_quemadas(src_img: rasterio.io.DatasetReader) -> float:
     Returns:
     float: The number of burned hectares.
     """
-    raster_data = src_img.read(1)
-    threshold = 0  # Umbral para considerar un píxel como quemado
-    pixeles_quemados = np.sum(raster_data > threshold)
-    tamanio_pixel = src_img.transform.a * -src_img.transform.e  # Negative due to north-up orientation
-    hectareas_quemadas = pixeles_quemados * tamanio_pixel / 10000
-    return hectareas_quemadas
+    tif_pre_fire = "../rasters/lansat/2023_valpo_swir16-nir-red.tif"
+    tif_post_fire = "../rasters/lansat/2024_valpo_swir16-nir-red.tif"
+
+    pre_fire = rasterio.open(tif_pre_fire)
+    post_fire = rasterio.open(tif_post_fire)
+    
+    
 
 def show_quantification():
     """
@@ -34,12 +35,12 @@ def show_quantification():
     with row1_col1:
         map = leafmap.Map(latlon_control=False)
         # Mapas de color disponibles en: https://matplotlib.org/stable/gallery/color/colormap_reference.html
-        map.add_raster(tif, layer_name="Landsat", colormap="RdYlBu", opacity=0.7)
+        map.add_raster(tif, layer_name="Landsat", colormap="RdBu", opacity=0.7, nodata=0)
         map.to_streamlit()
 
     with row1_col2:
         st.write("## Métricas")
-        hectareas_quemadas = calcular_hectareas_quemadas(src_img)
+        hectareas_quemadas = 1000
         row1_col2_col1, row1_col2_col2 = st.columns([1, 3])
         with row1_col2_col1:
             st.image("img/terreno.png")
