@@ -69,6 +69,9 @@ quote-style = "double"
 select = ["E", "F", "I", "UP", "B", "SIM", "N"]
 ignore = ["E501"]
 
+[tool.ruff.lint.isort]
+known-first-party = ["datatonfach"]
+
 [tool.ruff.lint.per-file-ignores]
 "notebooks/*" = ["E", "F", "B", "N"]
 "tests/*" = ["N802", "N803"]
