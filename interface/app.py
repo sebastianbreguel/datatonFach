@@ -1,14 +1,12 @@
 import streamlit as st
-from views.quantification import show_quantification
 from views.prediction import show_prediction
+from views.quantification import show_quantification
+
 
 def main():
     st.set_page_config(page_title="Analisis de incendios", layout="wide")
     st.sidebar.title("Analisis de incendios")
-    pages = {
-        "Cuantificador de incendios 🔢": show_quantification,
-        "Predictor de incendios ⏩️": show_prediction
-    }
+    pages = {"Cuantificador de incendios 🔢": show_quantification, "Predictor de incendios ⏩️": show_prediction}
 
     # Use query params for navigation to retain state across reloads
     page = "Cuantificador de incendios 🔢"
@@ -23,6 +21,7 @@ def main():
 
     # Display the selected page
     pages[page]()
+
 
 if __name__ == "__main__":
     main()

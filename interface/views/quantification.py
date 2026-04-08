@@ -1,12 +1,10 @@
-import streamlit as st
 import leafmap.foliumap as leafmap
-import rasterio
 import numpy as np
+import rasterio
+import streamlit as st
 
 
-def calcular_hectareas_quemadas(
-    pre_fire_src: rasterio.io.DatasetReader, post_fire_src: rasterio.io.DatasetReader
-) -> dict:
+def calcular_hectareas_quemadas(pre_fire_src: rasterio.io.DatasetReader, post_fire_src: rasterio.io.DatasetReader) -> dict:
     """
     Calculate the burned area in hectares from pre and post-fire satellite images, categorized by severity.
 
@@ -17,12 +15,8 @@ def calcular_hectareas_quemadas(
     Returns:
     Dict[str, float]: Dictionary with the area of burned hectares categorized by severity.
     """
-    nbr_pre_fire = (pre_fire_src.read(2) - pre_fire_src.read(1)) / (
-        pre_fire_src.read(2) + pre_fire_src.read(1)
-    )
-    nbr_post_fire = (post_fire_src.read(2) - post_fire_src.read(1)) / (
-        post_fire_src.read(2) + post_fire_src.read(1)
-    )
+    nbr_pre_fire = (pre_fire_src.read(2) - pre_fire_src.read(1)) / (pre_fire_src.read(2) + pre_fire_src.read(1))
+    nbr_post_fire = (post_fire_src.read(2) - post_fire_src.read(1)) / (post_fire_src.read(2) + post_fire_src.read(1))
     dnbr = nbr_pre_fire - nbr_post_fire
 
     # Print min and max values without considering nodata values
@@ -44,9 +38,7 @@ def calcular_hectareas_quemadas(
 
     # Convert pixel count to hectares assuming each pixel is 30x30 meters.
     pixel_area_hectares = 30 * 30 / 10000
-    dnbr_areas = {
-        key: count * pixel_area_hectares for key, count in dnbr_counts.items()
-    }
+    dnbr_areas = {key: count * pixel_area_hectares for key, count in dnbr_counts.items()}
 
     return dnbr_areas
 
@@ -69,9 +61,7 @@ def show_quantification():
     with row1_col1:
         map = leafmap.Map(latlon_control=False)
         # Mapas de color disponibles en: https://matplotlib.org/stable/gallery/color/colormap_reference.html
-        map.add_raster(
-            tif, layer_name="Landsat", colormap="Dark2", opacity=0.8, nodata=0
-        )
+        map.add_raster(tif, layer_name="Landsat", colormap="Dark2", opacity=0.8, nodata=0)
         map.to_streamlit()
 
     with row1_col2:
@@ -90,12 +80,8 @@ def show_quantification():
         with row1_col2_col1:
             st.image("img/terreno.png")
         with row1_col2_col2:
-            st.metric(
-                label="Total", value="{:,.1f}".format(hectareas_quemadas), delta=""
-            )
+            st.metric(label="Total", value=f"{hectareas_quemadas:,.1f}", delta="")
 
         st.write(f"**Baja severidad**: {dnbr_counts_pixels['low_severity']}")
-        st.write(
-            f"**Mediana severidad**: {(dnbr_counts_pixels['moderate_high_severity'] + dnbr_counts_pixels['moderate_low_severity'])}"
-        )
+        st.write(f"**Mediana severidad**: {(dnbr_counts_pixels['moderate_high_severity'] + dnbr_counts_pixels['moderate_low_severity'])}")
         st.write(f"**Alta severidad**: {dnbr_counts_pixels['high_severity']}")
