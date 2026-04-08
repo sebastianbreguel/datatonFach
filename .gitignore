@@ -1,6 +1,6 @@
-# Data and models
-data/
-models/
+# Data and model artifacts (at repo root only, not the package subdir)
+/data/
+/models/
 *.npy
 *.pkl
 *.faiss
@@ -22,3 +22,4 @@ __pycache__/
 .DS_Store
 .idea/
 .vscode/
+dist/
