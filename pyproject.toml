@@ -76,6 +76,7 @@ known-first-party = ["datatonfach"]
 "notebooks/*" = ["E", "F", "B", "N"]
 "tests/*" = ["N802", "N803"]
 "src/datatonfach/cli.py" = ["B008"]  # typer.Option in defaults is idiomatic
+"src/datatonfach/models/*" = ["N803", "N806"]  # X is the sklearn convention for feature matrices
 "interface/*" = ["E", "F", "B", "N"]  # third-party streamlit views, left as-is
 
 [tool.pytest.ini_options]

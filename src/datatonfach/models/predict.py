@@ -28,7 +28,7 @@ def reduce_output_clases(y_pred_img: np.ndarray) -> np.ndarray:
     """Collapse duplicated classes in the prediction map."""
     _, old_ids = create_labelmap()
     _, new_ids = create_labelmap()
-    for old_id, new_idx in zip(old_ids, new_ids):
+    for old_id, new_idx in zip(old_ids, new_ids, strict=True):
         if new_idx != old_id:
             y_pred_img[y_pred_img == old_id] = new_idx
     return y_pred_img
